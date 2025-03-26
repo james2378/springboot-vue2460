@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.JinronggongjuDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.jinronggongju_name as jinronggongjuName
+        ,a.jinronggongju_uuid_number as jinronggongjuUuidNumber
+        ,a.jinronggongju_photo as jinronggongjuPhoto
+        ,a.zan_number as zanNumber
+        ,a.cai_number as caiNumber
+        ,a.jinronggongju_types as jinronggongjuTypes
+        ,a.huankuan_number as huankuanNumber
+        ,a.jinronggongju_lilv as jinronggongjuLilv
+        ,a.jinronggongju_clicknum as jinronggongjuClicknum
+        ,a.jinronggongju_content as jinronggongjuContent
+        ,a.shangxia_types as shangxiaTypes
+        ,a.jinronggongju_delete as jinronggongjuDelete
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.JinronggongjuView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+
+        FROM jinronggongju  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.jinronggongjuName != '' and params.jinronggongjuName != null and params.jinronggongjuName != 'null' ">
+                and a.jinronggongju_name like CONCAT('%',#{params.jinronggongjuName},'%')
+            </if>
+            <if test=" params.jinronggongjuUuidNumber != '' and params.jinronggongjuUuidNumber != null and params.jinronggongjuUuidNumber != 'null' ">
+                and a.jinronggongju_uuid_number like CONCAT('%',#{params.jinronggongjuUuidNumber},'%')
+            </if>
+            <if test="params.zanNumberStart != null and params.zanNumberStart != ''">
+                <![CDATA[  and a.zan_number >= #{params.zanNumberStart}   ]]>
+            </if>
+            <if test="params.zanNumberEnd != null and params.zanNumberEnd != ''">
+                <![CDATA[  and a.zan_number <= #{params.zanNumberEnd}   ]]>
+            </if>
+             <if test="params.zanNumber != null and params.zanNumber != ''">
+                and a.zan_number = #{params.zanNumber}
+             </if>
+            <if test="params.caiNumberStart != null and params.caiNumberStart != ''">
+                <![CDATA[  and a.cai_number >= #{params.caiNumberStart}   ]]>
+            </if>
+            <if test="params.caiNumberEnd != null and params.caiNumberEnd != ''">
+                <![CDATA[  and a.cai_number <= #{params.caiNumberEnd}   ]]>
+            </if>
+             <if test="params.caiNumber != null and params.caiNumber != ''">
+                and a.cai_number = #{params.caiNumber}
+             </if>
+            <if test="params.jinronggongjuTypes != null and params.jinronggongjuTypes != ''">
+                and a.jinronggongju_types = #{params.jinronggongjuTypes}
+            </if>
+            <if test="params.huankuanNumberStart != null and params.huankuanNumberStart != ''">
+                <![CDATA[  and a.huankuan_number >= #{params.huankuanNumberStart}   ]]>
+            </if>
+            <if test="params.huankuanNumberEnd != null and params.huankuanNumberEnd != ''">
+                <![CDATA[  and a.huankuan_number <= #{params.huankuanNumberEnd}   ]]>
+            </if>
+             <if test="params.huankuanNumber != null and params.huankuanNumber != ''">
+                and a.huankuan_number = #{params.huankuanNumber}
+             </if>
+            <if test="params.jinronggongjuLilvStart != null ">
+                <![CDATA[  and a.jinronggongju_lilv >= #{params.jinronggongjuLilvStart}   ]]>
+            </if>
+            <if test="params.jinronggongjuLilvEnd != null ">
+                <![CDATA[  and a.jinronggongju_lilv <= #{params.jinronggongjuLilvEnd}   ]]>
+            </if>
+            <if test="params.jinronggongjuLilv != null and params.jinronggongjuLilv != ''">
+                and a.jinronggongju_lilv = #{params.jinronggongjuLilv}
+            </if>
+            <if test="params.jinronggongjuClicknumStart != null and params.jinronggongjuClicknumStart != ''">
+                <![CDATA[  and a.jinronggongju_clicknum >= #{params.jinronggongjuClicknumStart}   ]]>
+            </if>
+            <if test="params.jinronggongjuClicknumEnd != null and params.jinronggongjuClicknumEnd != ''">
+                <![CDATA[  and a.jinronggongju_clicknum <= #{params.jinronggongjuClicknumEnd}   ]]>
+            </if>
+             <if test="params.jinronggongjuClicknum != null and params.jinronggongjuClicknum != ''">
+                and a.jinronggongju_clicknum = #{params.jinronggongjuClicknum}
+             </if>
+            <if test=" params.jinronggongjuContent != '' and params.jinronggongjuContent != null and params.jinronggongjuContent != 'null' ">
+                and a.jinronggongju_content like CONCAT('%',#{params.jinronggongjuContent},'%')
+            </if>
+            <if test="params.shangxiaTypes != null and params.shangxiaTypes != ''">
+                and a.shangxia_types = #{params.shangxiaTypes}
+            </if>
+            <if test="params.jinronggongjuDeleteStart != null and params.jinronggongjuDeleteStart != ''">
+                <![CDATA[  and a.jinronggongju_delete >= #{params.jinronggongjuDeleteStart}   ]]>
+            </if>
+            <if test="params.jinronggongjuDeleteEnd != null and params.jinronggongjuDeleteEnd != ''">
+                <![CDATA[  and a.jinronggongju_delete <= #{params.jinronggongjuDeleteEnd}   ]]>
+            </if>
+             <if test="params.jinronggongjuDelete != null and params.jinronggongjuDelete != ''">
+                and a.jinronggongju_delete = #{params.jinronggongjuDelete}
+             </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.insertTime != null and params.insertTime != ''">
+                and a.insert_time = #{params.insertTime}
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>

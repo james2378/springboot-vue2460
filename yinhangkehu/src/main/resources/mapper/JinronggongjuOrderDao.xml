@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.JinronggongjuOrderDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.jinronggongju_order_uuid_number as jinronggongjuOrderUuidNumber
+        ,a.jinronggongju_id as jinronggongjuId
+        ,a.yonghu_id as yonghuId
+        ,a.yinhangka_id as yinhangkaId
+        ,a.jinronggongju_order_jiekuanjine as jinronggongjuOrderJiekuanjine
+        ,a.jinronggongju_order_huankuanjine as jinronggongjuOrderHuankuanjine
+        ,a.zuiwanhuankuan_time as zuiwanhuankuanTime
+        ,a.jinronggongju_order_types as jinronggongjuOrderTypes
+        ,a.jinronggongju_order_payment_types as jinronggongjuOrderPaymentTypes
+        ,a.jinronggongju_order_yesno_types as jinronggongjuOrderYesnoTypes
+        ,a.jinronggongju_order_yesno_text as jinronggongjuOrderYesnoText
+        ,a.jinronggongju_order_shenhe_time as jinronggongjuOrderShenheTime
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.JinronggongjuOrderView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,jinronggongju.jinronggongju_name as jinronggongjuName
+        ,jinronggongju.jinronggongju_uuid_number as jinronggongjuUuidNumber
+        ,jinronggongju.jinronggongju_photo as jinronggongjuPhoto
+        ,jinronggongju.zan_number as zanNumber
+        ,jinronggongju.cai_number as caiNumber
+        ,jinronggongju.jinronggongju_types as jinronggongjuTypes
+        ,jinronggongju.huankuan_number as huankuanNumber
+        ,jinronggongju.jinronggongju_lilv as jinronggongjuLilv
+        ,jinronggongju.jinronggongju_clicknum as jinronggongjuClicknum
+        ,jinronggongju.jinronggongju_content as jinronggongjuContent
+        ,jinronggongju.shangxia_types as shangxiaTypes
+        ,jinronggongju.jinronggongju_delete as jinronggongjuDelete
+        ,yinhangka.yonghu_id as yinhangkaYonghuId
+        ,yinhangka.yinhangka_uuid_number as yinhangkaUuidNumber
+        ,yinhangka.yinhangka_photo as yinhangkaPhoto
+        ,yinhangka.yinhangka_kaikadi as yinhangkaKaikadi
+        ,yinhangka.yinhang_types as yinhangTypes
+        ,yinhangka.yinhangka_types as yinhangkaTypes
+        ,yinhangka.yinhangka_address as yinhangkaAddress
+        ,yinhangka.yinhangka_money as yinhangkaMoney
+        ,yinhangka.yinhangka_content as yinhangkaContent
+        ,yonghu.yonghu_uuid_number as yonghuUuidNumber
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_email as yonghuEmail
+        ,yonghu.zhengxindengji_types as zhengxindengjiTypes
+        ,yonghu.jinyong_types as jinyongTypes
+
+        FROM jinronggongju_order  a
+        left JOIN jinronggongju jinronggongju ON a.jinronggongju_id = jinronggongju.id
+        left JOIN yinhangka yinhangka ON a.yinhangka_id = yinhangka.id
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.jinronggongjuOrderUuidNumber != '' and params.jinronggongjuOrderUuidNumber != null and params.jinronggongjuOrderUuidNumber != 'null' ">
+                and a.jinronggongju_order_uuid_number like CONCAT('%',#{params.jinronggongjuOrderUuidNumber},'%')
+            </if>
+            <if test="params.jinronggongjuId != null and params.jinronggongjuId != ''">
+                and (
+                    a.jinronggongju_id = #{params.jinronggongjuId}
+                )
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    a.yonghu_id = #{params.yonghuId}
+                    or yinhangka.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test="params.yinhangkaId != null and params.yinhangkaId != ''">
+                and (
+                    a.yinhangka_id = #{params.yinhangkaId}
+                )
+            </if>
+            <if test="params.jinronggongjuOrderJiekuanjineStart != null ">
+                <![CDATA[  and a.jinronggongju_order_jiekuanjine >= #{params.jinronggongjuOrderJiekuanjineStart}   ]]>
+            </if>
+            <if test="params.jinronggongjuOrderJiekuanjineEnd != null ">
+                <![CDATA[  and a.jinronggongju_order_jiekuanjine <= #{params.jinronggongjuOrderJiekuanjineEnd}   ]]>
+            </if>
+            <if test="params.jinronggongjuOrderJiekuanjine != null and params.jinronggongjuOrderJiekuanjine != ''">
+                and a.jinronggongju_order_jiekuanjine = #{params.jinronggongjuOrderJiekuanjine}
+            </if>
+            <if test="params.jinronggongjuOrderHuankuanjineStart != null ">
+                <![CDATA[  and a.jinronggongju_order_huankuanjine >= #{params.jinronggongjuOrderHuankuanjineStart}   ]]>
+            </if>
+            <if test="params.jinronggongjuOrderHuankuanjineEnd != null ">
+                <![CDATA[  and a.jinronggongju_order_huankuanjine <= #{params.jinronggongjuOrderHuankuanjineEnd}   ]]>
+            </if>
+            <if test="params.jinronggongjuOrderHuankuanjine != null and params.jinronggongjuOrderHuankuanjine != ''">
+                and a.jinronggongju_order_huankuanjine = #{params.jinronggongjuOrderHuankuanjine}
+            </if>
+            <if test=" params.zuiwanhuankuanTimeStart != '' and params.zuiwanhuankuanTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.zuiwanhuankuan_time) >= UNIX_TIMESTAMP(#{params.zuiwanhuankuanTimeStart}) ]]>
+            </if>
+            <if test=" params.zuiwanhuankuanTimeEnd != '' and params.zuiwanhuankuanTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.zuiwanhuankuan_time) <= UNIX_TIMESTAMP(#{params.zuiwanhuankuanTimeEnd}) ]]>
+            </if>
+            <if test="params.zuiwanhuankuanTime != null and params.zuiwanhuankuanTime != ''">
+                and a.zuiwanhuankuan_time = #{params.zuiwanhuankuanTime}
+            </if>
+            <if test="params.jinronggongjuOrderTypes != null and params.jinronggongjuOrderTypes != ''">
+                and a.jinronggongju_order_types = #{params.jinronggongjuOrderTypes}
+            </if>
+            <if test="params.jinronggongjuOrderPaymentTypes != null and params.jinronggongjuOrderPaymentTypes != ''">
+                and a.jinronggongju_order_payment_types = #{params.jinronggongjuOrderPaymentTypes}
+            </if>
+            <if test="params.jinronggongjuOrderYesnoTypes != null and params.jinronggongjuOrderYesnoTypes != ''">
+                and a.jinronggongju_order_yesno_types = #{params.jinronggongjuOrderYesnoTypes}
+            </if>
+            <if test=" params.jinronggongjuOrderYesnoText != '' and params.jinronggongjuOrderYesnoText != null and params.jinronggongjuOrderYesnoText != 'null' ">
+                and a.jinronggongju_order_yesno_text like CONCAT('%',#{params.jinronggongjuOrderYesnoText},'%')
+            </if>
+            <if test=" params.jinronggongjuOrderShenheTimeStart != '' and params.jinronggongjuOrderShenheTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.jinronggongju_order_shenhe_time) >= UNIX_TIMESTAMP(#{params.jinronggongjuOrderShenheTimeStart}) ]]>
+            </if>
+            <if test=" params.jinronggongjuOrderShenheTimeEnd != '' and params.jinronggongjuOrderShenheTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.jinronggongju_order_shenhe_time) <= UNIX_TIMESTAMP(#{params.jinronggongjuOrderShenheTimeEnd}) ]]>
+            </if>
+            <if test="params.jinronggongjuOrderShenheTime != null and params.jinronggongjuOrderShenheTime != ''">
+                and a.jinronggongju_order_shenhe_time = #{params.jinronggongjuOrderShenheTime}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.insertTime != null and params.insertTime != ''">
+                and a.insert_time = #{params.insertTime}
+            </if>
+
+                <!-- 判断金融工具的id不为空 -->
+            <if test=" params.jinronggongjuIdNotNull != '' and params.jinronggongjuIdNotNull != null and params.jinronggongjuIdNotNull != 'null' ">
+                and a.jinronggongju_id IS NOT NULL
+            </if>
+            <if test=" params.jinronggongjuName != '' and params.jinronggongjuName != null and params.jinronggongjuName != 'null' ">
+                and jinronggongju.jinronggongju_name like CONCAT('%',#{params.jinronggongjuName},'%')
+            </if>
+            <if test=" params.jinronggongjuUuidNumber != '' and params.jinronggongjuUuidNumber != null and params.jinronggongjuUuidNumber != 'null' ">
+                and jinronggongju.jinronggongju_uuid_number like CONCAT('%',#{params.jinronggongjuUuidNumber},'%')
+            </if>
+            <if test="params.zanNumberStart != null  and params.zanNumberStart != '' ">
+                <![CDATA[  and jinronggongju.zan_number >= #{params.zanNumberStart}   ]]>
+            </if>
+            <if test="params.zanNumberEnd != null  and params.zanNumberEnd != '' ">
+                <![CDATA[  and jinronggongju.zan_number <= #{params.zanNumberEnd}   ]]>
+            </if>
+            <if test="params.zanNumber != null  and params.zanNumber != '' ">
+                and jinronggongju.zan_number = #{params.zanNumber}
+            </if>
+            <if test="params.caiNumberStart != null  and params.caiNumberStart != '' ">
+                <![CDATA[  and jinronggongju.cai_number >= #{params.caiNumberStart}   ]]>
+            </if>
+            <if test="params.caiNumberEnd != null  and params.caiNumberEnd != '' ">
+                <![CDATA[  and jinronggongju.cai_number <= #{params.caiNumberEnd}   ]]>
+            </if>
+            <if test="params.caiNumber != null  and params.caiNumber != '' ">
+                and jinronggongju.cai_number = #{params.caiNumber}
+            </if>
+            <if test="params.jinronggongjuTypes != null  and params.jinronggongjuTypes != ''">
+                and jinronggongju.jinronggongju_types = #{params.jinronggongjuTypes}
+            </if>
+
+            <if test="params.huankuanNumberStart != null  and params.huankuanNumberStart != '' ">
+                <![CDATA[  and jinronggongju.huankuan_number >= #{params.huankuanNumberStart}   ]]>
+            </if>
+            <if test="params.huankuanNumberEnd != null  and params.huankuanNumberEnd != '' ">
+                <![CDATA[  and jinronggongju.huankuan_number <= #{params.huankuanNumberEnd}   ]]>
+            </if>
+            <if test="params.huankuanNumber != null  and params.huankuanNumber != '' ">
+                and jinronggongju.huankuan_number = #{params.huankuanNumber}
+            </if>
+            <if test="params.jinronggongjuLilvStart != null ">
+                <![CDATA[  and jinronggongju.jinronggongju_lilv >= #{params.jinronggongjuLilvStart}   ]]>
+            </if>
+            <if test="params.jinronggongjuLilvEnd != null ">
+                <![CDATA[  and jinronggongju.jinronggongju_lilv <= #{params.jinronggongjuLilvEnd}   ]]>
+            </if>
+            <if test="params.jinronggongjuLilv != null and params.jinronggongjuLilv != ''">
+                and a.jinronggongju_lilv = #{params.jinronggongjuLilv}
+            </if>
+            <if test="params.jinronggongjuClicknumStart != null  and params.jinronggongjuClicknumStart != '' ">
+                <![CDATA[  and jinronggongju.jinronggongju_clicknum >= #{params.jinronggongjuClicknumStart}   ]]>
+            </if>
+            <if test="params.jinronggongjuClicknumEnd != null  and params.jinronggongjuClicknumEnd != '' ">
+                <![CDATA[  and jinronggongju.jinronggongju_clicknum <= #{params.jinronggongjuClicknumEnd}   ]]>
+            </if>
+            <if test="params.jinronggongjuClicknum != null  and params.jinronggongjuClicknum != '' ">
+                and jinronggongju.jinronggongju_clicknum = #{params.jinronggongjuClicknum}
+            </if>
+            <if test=" params.jinronggongjuContent != '' and params.jinronggongjuContent != null and params.jinronggongjuContent != 'null' ">
+                and jinronggongju.jinronggongju_content like CONCAT('%',#{params.jinronggongjuContent},'%')
+            </if>
+            <if test="params.shangxiaTypes != null  and params.shangxiaTypes != ''">
+                and jinronggongju.shangxia_types = #{params.shangxiaTypes}
+            </if>
+
+            <if test="params.jinronggongjuDeleteStart != null  and params.jinronggongjuDeleteStart != '' ">
+                <![CDATA[  and jinronggongju.jinronggongju_delete >= #{params.jinronggongjuDeleteStart}   ]]>
+            </if>
+            <if test="params.jinronggongjuDeleteEnd != null  and params.jinronggongjuDeleteEnd != '' ">
+                <![CDATA[  and jinronggongju.jinronggongju_delete <= #{params.jinronggongjuDeleteEnd}   ]]>
+            </if>
+            <if test="params.jinronggongjuDelete != null  and params.jinronggongjuDelete != '' ">
+                and jinronggongju.jinronggongju_delete = #{params.jinronggongjuDelete}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(jinronggongju.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(jinronggongju.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.insertTime != null and params.insertTime != ''">
+                and a.insert_time = #{params.insertTime}
+            </if>
+                <!-- 判断银行卡的id不为空 -->
+            <if test=" params.yinhangkaIdNotNull != '' and params.yinhangkaIdNotNull != null and params.yinhangkaIdNotNull != 'null' ">
+                and a.yinhangka_id IS NOT NULL
+            </if>
+            <if test=" params.yinhangkaUuidNumber != '' and params.yinhangkaUuidNumber != null and params.yinhangkaUuidNumber != 'null' ">
+                and yinhangka.yinhangka_uuid_number like CONCAT('%',#{params.yinhangkaUuidNumber},'%')
+            </if>
+            <if test=" params.yinhangkaKaikadi != '' and params.yinhangkaKaikadi != null and params.yinhangkaKaikadi != 'null' ">
+                and yinhangka.yinhangka_kaikadi like CONCAT('%',#{params.yinhangkaKaikadi},'%')
+            </if>
+            <if test="params.yinhangTypes != null  and params.yinhangTypes != ''">
+                and yinhangka.yinhang_types = #{params.yinhangTypes}
+            </if>
+
+            <if test="params.yinhangkaTypes != null  and params.yinhangkaTypes != ''">
+                and yinhangka.yinhangka_types = #{params.yinhangkaTypes}
+            </if>
+
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(yinhangka.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(yinhangka.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.insertTime != null and params.insertTime != ''">
+                and a.insert_time = #{params.insertTime}
+            </if>
+            <if test=" params.yinhangkaAddress != '' and params.yinhangkaAddress != null and params.yinhangkaAddress != 'null' ">
+                and yinhangka.yinhangka_address like CONCAT('%',#{params.yinhangkaAddress},'%')
+            </if>
+            <if test="params.yinhangkaMoneyStart != null ">
+                <![CDATA[  and yinhangka.yinhangka_money >= #{params.yinhangkaMoneyStart}   ]]>
+            </if>
+            <if test="params.yinhangkaMoneyEnd != null ">
+                <![CDATA[  and yinhangka.yinhangka_money <= #{params.yinhangkaMoneyEnd}   ]]>
+            </if>
+            <if test="params.yinhangkaMoney != null and params.yinhangkaMoney != ''">
+                and a.yinhangka_money = #{params.yinhangkaMoney}
+            </if>
+            <if test=" params.yinhangkaContent != '' and params.yinhangkaContent != null and params.yinhangkaContent != 'null' ">
+                and yinhangka.yinhangka_content like CONCAT('%',#{params.yinhangkaContent},'%')
+            </if>
+                <!-- 判断用户的id不为空 -->
+            <if test=" params.yonghuIdNotNull != '' and params.yonghuIdNotNull != null and params.yonghuIdNotNull != 'null' ">
+                and a.yonghu_id IS NOT NULL
+            </if>
+            <if test=" params.yonghuUuidNumber != '' and params.yonghuUuidNumber != null and params.yonghuUuidNumber != 'null' ">
+                and yonghu.yonghu_uuid_number like CONCAT('%',#{params.yonghuUuidNumber},'%')
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+            <if test="params.zhengxindengjiTypes != null  and params.zhengxindengjiTypes != ''">
+                and yonghu.zhengxindengji_types = #{params.zhengxindengjiTypes}
+            </if>
+
+            <if test="params.jinyongTypes != null  and params.jinyongTypes != ''">
+                and yonghu.jinyong_types = #{params.jinyongTypes}
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.YinhangkaJiluDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.yinhangka_id as yinhangkaId
+        ,a.yinhangka_jilu_uuid_number as yinhangkaJiluUuidNumber
+        ,a.yinhangka_jilu_types as yinhangkaJiluTypes
+        ,a.yinhangka_jilu_jine as yinhangkaJiluJine
+        ,a.yinhangka_jilu_content as yinhangkaJiluContent
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.YinhangkaJiluView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,yinhangka.yonghu_id as yinhangkaYonghuId
+        ,yinhangka.yinhangka_uuid_number as yinhangkaUuidNumber
+        ,yinhangka.yinhangka_photo as yinhangkaPhoto
+        ,yinhangka.yinhangka_kaikadi as yinhangkaKaikadi
+        ,yinhangka.yinhang_types as yinhangTypes
+        ,yinhangka.yinhangka_types as yinhangkaTypes
+        ,yinhangka.yinhangka_address as yinhangkaAddress
+        ,yinhangka.yinhangka_money as yinhangkaMoney
+        ,yinhangka.yinhangka_content as yinhangkaContent
+
+        FROM yinhangka_jilu  a
+        left JOIN yinhangka yinhangka ON a.yinhangka_id = yinhangka.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.yinhangkaId != null and params.yinhangkaId != ''">
+                and (
+                    a.yinhangka_id = #{params.yinhangkaId}
+                )
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    yinhangka.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test=" params.yinhangkaJiluUuidNumber != '' and params.yinhangkaJiluUuidNumber != null and params.yinhangkaJiluUuidNumber != 'null' ">
+                and a.yinhangka_jilu_uuid_number like CONCAT('%',#{params.yinhangkaJiluUuidNumber},'%')
+            </if>
+            <if test="params.yinhangkaJiluTypes != null and params.yinhangkaJiluTypes != ''">
+                and a.yinhangka_jilu_types = #{params.yinhangkaJiluTypes}
+            </if>
+            <if test="params.yinhangkaJiluJineStart != null ">
+                <![CDATA[  and a.yinhangka_jilu_jine >= #{params.yinhangkaJiluJineStart}   ]]>
+            </if>
+            <if test="params.yinhangkaJiluJineEnd != null ">
+                <![CDATA[  and a.yinhangka_jilu_jine <= #{params.yinhangkaJiluJineEnd}   ]]>
+            </if>
+            <if test="params.yinhangkaJiluJine != null and params.yinhangkaJiluJine != ''">
+                and a.yinhangka_jilu_jine = #{params.yinhangkaJiluJine}
+            </if>
+            <if test=" params.yinhangkaJiluContent != '' and params.yinhangkaJiluContent != null and params.yinhangkaJiluContent != 'null' ">
+                and a.yinhangka_jilu_content like CONCAT('%',#{params.yinhangkaJiluContent},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.insertTime != null and params.insertTime != ''">
+                and a.insert_time = #{params.insertTime}
+            </if>
+
+                <!-- 判断银行卡的id不为空 -->
+            <if test=" params.yinhangkaIdNotNull != '' and params.yinhangkaIdNotNull != null and params.yinhangkaIdNotNull != 'null' ">
+                and a.yinhangka_id IS NOT NULL
+            </if>
+            <if test="params.yonghuId != null  and params.yonghuId != ''">
+                and yinhangka.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test=" params.yinhangkaUuidNumber != '' and params.yinhangkaUuidNumber != null and params.yinhangkaUuidNumber != 'null' ">
+                and yinhangka.yinhangka_uuid_number like CONCAT('%',#{params.yinhangkaUuidNumber},'%')
+            </if>
+            <if test=" params.yinhangkaKaikadi != '' and params.yinhangkaKaikadi != null and params.yinhangkaKaikadi != 'null' ">
+                and yinhangka.yinhangka_kaikadi like CONCAT('%',#{params.yinhangkaKaikadi},'%')
+            </if>
+            <if test="params.yinhangTypes != null  and params.yinhangTypes != ''">
+                and yinhangka.yinhang_types = #{params.yinhangTypes}
+            </if>
+
+            <if test="params.yinhangkaTypes != null  and params.yinhangkaTypes != ''">
+                and yinhangka.yinhangka_types = #{params.yinhangkaTypes}
+            </if>
+
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(yinhangka.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(yinhangka.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.insertTime != null and params.insertTime != ''">
+                and a.insert_time = #{params.insertTime}
+            </if>
+            <if test=" params.yinhangkaAddress != '' and params.yinhangkaAddress != null and params.yinhangkaAddress != 'null' ">
+                and yinhangka.yinhangka_address like CONCAT('%',#{params.yinhangkaAddress},'%')
+            </if>
+            <if test="params.yinhangkaMoneyStart != null ">
+                <![CDATA[  and yinhangka.yinhangka_money >= #{params.yinhangkaMoneyStart}   ]]>
+            </if>
+            <if test="params.yinhangkaMoneyEnd != null ">
+                <![CDATA[  and yinhangka.yinhangka_money <= #{params.yinhangkaMoneyEnd}   ]]>
+            </if>
+            <if test="params.yinhangkaMoney != null and params.yinhangkaMoney != ''">
+                and a.yinhangka_money = #{params.yinhangkaMoney}
+            </if>
+            <if test=" params.yinhangkaContent != '' and params.yinhangkaContent != null and params.yinhangkaContent != 'null' ">
+                and yinhangka.yinhangka_content like CONCAT('%',#{params.yinhangkaContent},'%')
+            </if>
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>

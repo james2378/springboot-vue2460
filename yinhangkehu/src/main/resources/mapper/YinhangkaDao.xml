@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.YinhangkaDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.yonghu_id as yonghuId
+        ,a.yinhangka_uuid_number as yinhangkaUuidNumber
+        ,a.yinhangka_photo as yinhangkaPhoto
+        ,a.yinhangka_kaikadi as yinhangkaKaikadi
+        ,a.yinhang_types as yinhangTypes
+        ,a.yinhangka_types as yinhangkaTypes
+        ,a.insert_time as insertTime
+        ,a.yinhangka_address as yinhangkaAddress
+        ,a.yinhangka_money as yinhangkaMoney
+        ,a.yinhangka_content as yinhangkaContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.YinhangkaView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,yonghu.yonghu_uuid_number as yonghuUuidNumber
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_email as yonghuEmail
+        ,yonghu.zhengxindengji_types as zhengxindengjiTypes
+        ,yonghu.jinyong_types as jinyongTypes
+
+        FROM yinhangka  a
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    a.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test=" params.yinhangkaUuidNumber != '' and params.yinhangkaUuidNumber != null and params.yinhangkaUuidNumber != 'null' ">
+                and a.yinhangka_uuid_number like CONCAT('%',#{params.yinhangkaUuidNumber},'%')
+            </if>
+            <if test=" params.yinhangkaKaikadi != '' and params.yinhangkaKaikadi != null and params.yinhangkaKaikadi != 'null' ">
+                and a.yinhangka_kaikadi like CONCAT('%',#{params.yinhangkaKaikadi},'%')
+            </if>
+            <if test="params.yinhangTypes != null and params.yinhangTypes != ''">
+                and a.yinhang_types = #{params.yinhangTypes}
+            </if>
+            <if test="params.yinhangkaTypes != null and params.yinhangkaTypes != ''">
+                and a.yinhangka_types = #{params.yinhangkaTypes}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.insertTime != null and params.insertTime != ''">
+                and a.insert_time = #{params.insertTime}
+            </if>
+            <if test=" params.yinhangkaAddress != '' and params.yinhangkaAddress != null and params.yinhangkaAddress != 'null' ">
+                and a.yinhangka_address like CONCAT('%',#{params.yinhangkaAddress},'%')
+            </if>
+            <if test="params.yinhangkaMoneyStart != null ">
+                <![CDATA[  and a.yinhangka_money >= #{params.yinhangkaMoneyStart}   ]]>
+            </if>
+            <if test="params.yinhangkaMoneyEnd != null ">
+                <![CDATA[  and a.yinhangka_money <= #{params.yinhangkaMoneyEnd}   ]]>
+            </if>
+            <if test="params.yinhangkaMoney != null and params.yinhangkaMoney != ''">
+                and a.yinhangka_money = #{params.yinhangkaMoney}
+            </if>
+            <if test=" params.yinhangkaContent != '' and params.yinhangkaContent != null and params.yinhangkaContent != 'null' ">
+                and a.yinhangka_content like CONCAT('%',#{params.yinhangkaContent},'%')
+            </if>
+
+                <!-- 判断用户的id不为空 -->
+            <if test=" params.yonghuIdNotNull != '' and params.yonghuIdNotNull != null and params.yonghuIdNotNull != 'null' ">
+                and a.yonghu_id IS NOT NULL
+            </if>
+            <if test=" params.yonghuUuidNumber != '' and params.yonghuUuidNumber != null and params.yonghuUuidNumber != 'null' ">
+                and yonghu.yonghu_uuid_number like CONCAT('%',#{params.yonghuUuidNumber},'%')
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+            <if test="params.zhengxindengjiTypes != null  and params.zhengxindengjiTypes != ''">
+                and yonghu.zhengxindengji_types = #{params.zhengxindengjiTypes}
+            </if>
+
+            <if test="params.jinyongTypes != null  and params.jinyongTypes != ''">
+                and yonghu.jinyong_types = #{params.jinyongTypes}
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.LicaichanpinCollectionDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.licaichanpin_id as licaichanpinId
+        ,a.yonghu_id as yonghuId
+        ,a.licaichanpin_collection_types as licaichanpinCollectionTypes
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.LicaichanpinCollectionView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,licaichanpin.licaichanpin_name as licaichanpinName
+        ,licaichanpin.licaichanpin_uuid_number as licaichanpinUuidNumber
+        ,licaichanpin.licaichanpin_photo as licaichanpinPhoto
+        ,licaichanpin.zan_number as zanNumber
+        ,licaichanpin.cai_number as caiNumber
+        ,licaichanpin.licaichanpin_types as licaichanpinTypes
+        ,licaichanpin.fashou_time as fashouTime
+        ,licaichanpin.licaichanpin_nianshouyi as licaichanpinNianshouyi
+        ,licaichanpin.licaichanpin_fengxian_types as licaichanpinFengxianTypes
+        ,licaichanpin.licaichanpin_kucun_number as licaichanpinKucunNumber
+        ,licaichanpin.licaichanpin_old_money as licaichanpinOldMoney
+        ,licaichanpin.licaichanpin_new_money as licaichanpinNewMoney
+        ,licaichanpin.licaichanpin_clicknum as licaichanpinClicknum
+        ,licaichanpin.licaichanpin_content as licaichanpinContent
+        ,licaichanpin.shangxia_types as shangxiaTypes
+        ,licaichanpin.licaichanpin_delete as licaichanpinDelete
+        ,yonghu.yonghu_uuid_number as yonghuUuidNumber
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_email as yonghuEmail
+        ,yonghu.zhengxindengji_types as zhengxindengjiTypes
+        ,yonghu.jinyong_types as jinyongTypes
+
+        FROM licaichanpin_collection  a
+        left JOIN licaichanpin licaichanpin ON a.licaichanpin_id = licaichanpin.id
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.licaichanpinId != null and params.licaichanpinId != ''">
+                and (
+                    a.licaichanpin_id = #{params.licaichanpinId}
+                )
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    a.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test="params.licaichanpinCollectionTypes != null and params.licaichanpinCollectionTypes != ''">
+                and a.licaichanpin_collection_types = #{params.licaichanpinCollectionTypes}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.insertTime != null and params.insertTime != ''">
+                and a.insert_time = #{params.insertTime}
+            </if>
+
+                <!-- 判断理财产品的id不为空 -->
+            <if test=" params.licaichanpinIdNotNull != '' and params.licaichanpinIdNotNull != null and params.licaichanpinIdNotNull != 'null' ">
+                and a.licaichanpin_id IS NOT NULL
+            </if>
+            <if test=" params.licaichanpinName != '' and params.licaichanpinName != null and params.licaichanpinName != 'null' ">
+                and licaichanpin.licaichanpin_name like CONCAT('%',#{params.licaichanpinName},'%')
+            </if>
+            <if test=" params.licaichanpinUuidNumber != '' and params.licaichanpinUuidNumber != null and params.licaichanpinUuidNumber != 'null' ">
+                and licaichanpin.licaichanpin_uuid_number like CONCAT('%',#{params.licaichanpinUuidNumber},'%')
+            </if>
+            <if test="params.zanNumberStart != null  and params.zanNumberStart != '' ">
+                <![CDATA[  and licaichanpin.zan_number >= #{params.zanNumberStart}   ]]>
+            </if>
+            <if test="params.zanNumberEnd != null  and params.zanNumberEnd != '' ">
+                <![CDATA[  and licaichanpin.zan_number <= #{params.zanNumberEnd}   ]]>
+            </if>
+            <if test="params.zanNumber != null  and params.zanNumber != '' ">
+                and licaichanpin.zan_number = #{params.zanNumber}
+            </if>
+            <if test="params.caiNumberStart != null  and params.caiNumberStart != '' ">
+                <![CDATA[  and licaichanpin.cai_number >= #{params.caiNumberStart}   ]]>
+            </if>
+            <if test="params.caiNumberEnd != null  and params.caiNumberEnd != '' ">
+                <![CDATA[  and licaichanpin.cai_number <= #{params.caiNumberEnd}   ]]>
+            </if>
+            <if test="params.caiNumber != null  and params.caiNumber != '' ">
+                and licaichanpin.cai_number = #{params.caiNumber}
+            </if>
+            <if test="params.licaichanpinTypes != null  and params.licaichanpinTypes != ''">
+                and licaichanpin.licaichanpin_types = #{params.licaichanpinTypes}
+            </if>
+
+            <if test=" params.fashouTimeStart != '' and params.fashouTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(licaichanpin.fashou_time) >= UNIX_TIMESTAMP(#{params.fashouTimeStart}) ]]>
+            </if>
+            <if test=" params.fashouTimeEnd != '' and params.fashouTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(licaichanpin.fashou_time) <= UNIX_TIMESTAMP(#{params.fashouTimeEnd}) ]]>
+            </if>
+            <if test="params.fashouTime != null and params.fashouTime != ''">
+                and a.fashou_time = #{params.fashouTime}
+            </if>
+            <if test=" params.licaichanpinNianshouyi != '' and params.licaichanpinNianshouyi != null and params.licaichanpinNianshouyi != 'null' ">
+                and licaichanpin.licaichanpin_nianshouyi like CONCAT('%',#{params.licaichanpinNianshouyi},'%')
+            </if>
+            <if test="params.licaichanpinFengxianTypes != null  and params.licaichanpinFengxianTypes != ''">
+                and licaichanpin.licaichanpin_fengxian_types = #{params.licaichanpinFengxianTypes}
+            </if>
+
+            <if test="params.licaichanpinKucunNumberStart != null  and params.licaichanpinKucunNumberStart != '' ">
+                <![CDATA[  and licaichanpin.licaichanpin_kucun_number >= #{params.licaichanpinKucunNumberStart}   ]]>
+            </if>
+            <if test="params.licaichanpinKucunNumberEnd != null  and params.licaichanpinKucunNumberEnd != '' ">
+                <![CDATA[  and licaichanpin.licaichanpin_kucun_number <= #{params.licaichanpinKucunNumberEnd}   ]]>
+            </if>
+            <if test="params.licaichanpinKucunNumber != null  and params.licaichanpinKucunNumber != '' ">
+                and licaichanpin.licaichanpin_kucun_number = #{params.licaichanpinKucunNumber}
+            </if>
+            <if test="params.licaichanpinOldMoneyStart != null ">
+                <![CDATA[  and licaichanpin.licaichanpin_old_money >= #{params.licaichanpinOldMoneyStart}   ]]>
+            </if>
+            <if test="params.licaichanpinOldMoneyEnd != null ">
+                <![CDATA[  and licaichanpin.licaichanpin_old_money <= #{params.licaichanpinOldMoneyEnd}   ]]>
+            </if>
+            <if test="params.licaichanpinOldMoney != null and params.licaichanpinOldMoney != ''">
+                and a.licaichanpin_old_money = #{params.licaichanpinOldMoney}
+            </if>
+            <if test="params.licaichanpinNewMoneyStart != null ">
+                <![CDATA[  and licaichanpin.licaichanpin_new_money >= #{params.licaichanpinNewMoneyStart}   ]]>
+            </if>
+            <if test="params.licaichanpinNewMoneyEnd != null ">
+                <![CDATA[  and licaichanpin.licaichanpin_new_money <= #{params.licaichanpinNewMoneyEnd}   ]]>
+            </if>
+            <if test="params.licaichanpinNewMoney != null and params.licaichanpinNewMoney != ''">
+                and a.licaichanpin_new_money = #{params.licaichanpinNewMoney}
+            </if>
+            <if test="params.licaichanpinClicknumStart != null  and params.licaichanpinClicknumStart != '' ">
+                <![CDATA[  and licaichanpin.licaichanpin_clicknum >= #{params.licaichanpinClicknumStart}   ]]>
+            </if>
+            <if test="params.licaichanpinClicknumEnd != null  and params.licaichanpinClicknumEnd != '' ">
+                <![CDATA[  and licaichanpin.licaichanpin_clicknum <= #{params.licaichanpinClicknumEnd}   ]]>
+            </if>
+            <if test="params.licaichanpinClicknum != null  and params.licaichanpinClicknum != '' ">
+                and licaichanpin.licaichanpin_clicknum = #{params.licaichanpinClicknum}
+            </if>
+            <if test=" params.licaichanpinContent != '' and params.licaichanpinContent != null and params.licaichanpinContent != 'null' ">
+                and licaichanpin.licaichanpin_content like CONCAT('%',#{params.licaichanpinContent},'%')
+            </if>
+            <if test="params.shangxiaTypes != null  and params.shangxiaTypes != ''">
+                and licaichanpin.shangxia_types = #{params.shangxiaTypes}
+            </if>
+
+            <if test="params.licaichanpinDeleteStart != null  and params.licaichanpinDeleteStart != '' ">
+                <![CDATA[  and licaichanpin.licaichanpin_delete >= #{params.licaichanpinDeleteStart}   ]]>
+            </if>
+            <if test="params.licaichanpinDeleteEnd != null  and params.licaichanpinDeleteEnd != '' ">
+                <![CDATA[  and licaichanpin.licaichanpin_delete <= #{params.licaichanpinDeleteEnd}   ]]>
+            </if>
+            <if test="params.licaichanpinDelete != null  and params.licaichanpinDelete != '' ">
+                and licaichanpin.licaichanpin_delete = #{params.licaichanpinDelete}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(licaichanpin.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(licaichanpin.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.insertTime != null and params.insertTime != ''">
+                and a.insert_time = #{params.insertTime}
+            </if>
+                <!-- 判断用户的id不为空 -->
+            <if test=" params.yonghuIdNotNull != '' and params.yonghuIdNotNull != null and params.yonghuIdNotNull != 'null' ">
+                and a.yonghu_id IS NOT NULL
+            </if>
+            <if test=" params.yonghuUuidNumber != '' and params.yonghuUuidNumber != null and params.yonghuUuidNumber != 'null' ">
+                and yonghu.yonghu_uuid_number like CONCAT('%',#{params.yonghuUuidNumber},'%')
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+            <if test="params.zhengxindengjiTypes != null  and params.zhengxindengjiTypes != ''">
+                and yonghu.zhengxindengji_types = #{params.zhengxindengjiTypes}
+            </if>
+
+            <if test="params.jinyongTypes != null  and params.jinyongTypes != ''">
+                and yonghu.jinyong_types = #{params.jinyongTypes}
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
